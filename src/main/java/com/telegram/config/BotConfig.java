@@ -10,6 +10,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import ru.tinkoff.invest.openapi.OpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OkHttpOpenApi;
 
 @Setter
 @Getter
@@ -20,9 +22,11 @@ public class BotConfig {
     private String botUserName;
     private String botToken;
 
+    private boolean isSandBoxMode;
+
 
     @Bean
-    public TelegramBot myWizardTelegramBot(TelegramFacade telegramFacade) {
+    public TelegramBot TelegramBot(TelegramFacade telegramFacade) {
 
 
 
@@ -42,6 +46,12 @@ public class BotConfig {
         messageSource.setBasename("classpath:messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
+    }
+    @Bean
+    public OpenApi api(){
+
+        String token = System.getenv("token");
+        return new OkHttpOpenApi(token,isSandBoxMode);
     }
 }
 

@@ -1,11 +1,19 @@
 package com.telegram.api;
 
 import com.telegram.cache.UserDataCache;
+import com.telegram.model.UserProfileData;
+import com.telegram.services.MainMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+
+import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
@@ -16,10 +24,12 @@ public class TelegramFacade {
     public TelegramFacade(BotStateContext botStateContext, UserDataCache userDataCache) {
         this.botStateContext = botStateContext;
         this.userDataCache = userDataCache;
+
     }
 
-    public SendMessage handleUpdate(Update update) {
+    public BotApiMethod<?> handleUpdate(Update update) throws ExecutionException, InterruptedException {
         SendMessage replyMessage = null;
+
 
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
@@ -31,7 +41,8 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-    private SendMessage handleInputMessage(Message message) {
+
+    private SendMessage handleInputMessage(Message message) throws ExecutionException, InterruptedException {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
         BotState botState;
@@ -39,13 +50,13 @@ public class TelegramFacade {
 
         switch (inputMsg) {
             case "/start":
-                botState = BotState.ASK_START;
+                botState = BotState.START;
                 break;
-            case "Получить данные профиля":
-                botState = BotState.FILLING_PROFILE;
+            case "My Investment results":
+                botState = BotState.SHOW_INVEST_RESULT;
                 break;
-            case "Помощь":
-                botState = BotState.SHOW_HELP_MENU;
+            case "My Investment portfolio":
+                botState = BotState.SHOW_INVEST_PROFILE;
                 break;
             default:
                 botState = userDataCache.getUsersCurrentBotState(userId);

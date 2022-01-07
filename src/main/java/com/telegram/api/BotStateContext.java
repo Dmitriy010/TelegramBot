@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class BotStateContext {
@@ -16,14 +17,14 @@ public class BotStateContext {
         messageHandlers.forEach(handler -> this.messageHandlers.put(handler.getHandlerName(), handler));
     }
 
-    public SendMessage processInputMessage(BotState currentState, Message message) {
+    public SendMessage processInputMessage(BotState currentState, Message message) throws ExecutionException, InterruptedException {
         InputMessageHandler currentMessageHandler = findMessageHandler(currentState);
         return currentMessageHandler.handle(message);
     }
 
     private InputMessageHandler findMessageHandler(BotState currentState) {
         if (isFillingProfileState(currentState)) {
-            return messageHandlers.get(BotState.FILLING_PROFILE);
+            return messageHandlers.get(BotState.ONLINE);
         }
 
         return messageHandlers.get(currentState);
@@ -31,11 +32,7 @@ public class BotStateContext {
 
     private boolean isFillingProfileState(BotState currentState) {
         switch (currentState) {
-            case ASK_NAME:
-            case ASK_AGE:
-            case ASK_LEVEL_ENGLISH:
-            case FILLING_PROFILE:
-            case PROFILE_FILLED:
+            case ONLINE:
                 return true;
             default:
                 return false;

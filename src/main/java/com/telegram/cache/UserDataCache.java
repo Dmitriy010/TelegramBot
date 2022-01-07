@@ -21,9 +21,8 @@ public class UserDataCache implements DataCache {
     public BotState getUsersCurrentBotState(long userId) {
         BotState botState = usersBotStates.get(userId);
         if (botState == null) {
-            botState = BotState.ASK_START;
+            botState = BotState.START;
         }
-
         return botState;
     }
 
@@ -36,9 +35,5 @@ public class UserDataCache implements DataCache {
         return userProfileData;
     }
 
-    @Override
-    public void saveUserProfileData(long userId, UserProfileData userProfileData) {
-        usersProfileData.put(userId, userProfileData);
-    }
 }
 

@@ -1,6 +1,7 @@
 package com.telegram;
 
 import com.telegram.api.TelegramFacade;
+import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -34,6 +35,7 @@ public class TelegramBot extends TelegramWebhookBot {
         return webHookPath;
     }
 
+    @SneakyThrows
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
 
